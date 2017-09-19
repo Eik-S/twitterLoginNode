@@ -12,7 +12,6 @@ var errorPage = config.pages.errorPage;
 
 //Get mysql-credentials from config file
 var dbCon = mysql.createConnection({
-    // TODO: Delete before git upload
     host: config.dbCred.host,
     user: config.dbCred.user,
     password: config.dbCred.password,
@@ -25,7 +24,7 @@ dbCon.connect( function( error){
 });
 
 
-// This function is executed when a client connets to the server
+// This function is executed when a client connects to the server
 io.on('connection', function(socket){
 
     // Some information about the connecting client for the log
