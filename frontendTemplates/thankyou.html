@@ -17,7 +17,7 @@
             return results[1] || 0;
         }
         $(function() {
-            var socket = io("http://localhost:3000");
+            var socket = io("https://localhost:3000");
             var oauthToken = $.urlParam('oauth_token');
             var oauthSecret = $.urlParam('oauth_verifier');
             if(oauthToken && oauthSecret)

@@ -7,17 +7,22 @@
     </head>
     <body>
         <button>Login with Twitter</button>
+        <div id="counter"></div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
         <script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script>
             $(function() {
-                var socket = io('http://localhost:3000');
+                var socket = io('https://localhost:3000');
                 $('button').on('click', function(){
                     socket.emit('twitterAuth');
                 });
                 socket.on('redirect', function(destination){
                     window.location.href = destination;
                 });
+                socket.on('setCounter', function( tokenCount){
+                    var txt = document.createTextNode( tokenCount + 
+                            " tokens are already collected.");
+                    $('#counter').append(txt);
             });
         </script>
     </body>

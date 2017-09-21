@@ -1,10 +1,16 @@
+var fs = require('fs');
 var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+
+var sslCert = {
+    cert: fs.readFileSync('/path/to/your/cert.pem'),
+    key: fs.readFileSync('/path/to/your/key.pem')
+};
+
+var https = require('https').createServer( sslCert, app);
+var io = require('socket.io')(https);
 var Twitter = require('node-twitter-api');
 var mysql = require('mysql');
 var config = require('./config');
-var fs = require('fs');
 
 var userExistsErrorPage = config.pages.userExistsPage;
 var errorPage = config.pages.errorPage;
@@ -12,6 +18,7 @@ var errorPage = config.pages.errorPage;
 
 //Get mysql-credentials from config file
 var dbCon = mysql.createConnection({
+    // TODO: Delete before git upload
     host: config.dbCred.host,
     user: config.dbCred.user,
     password: config.dbCred.password,
@@ -24,8 +31,9 @@ dbCon.connect( function( error){
 });
 
 
-// This function is executed when a client connects to the server
+// This function is executed when a client connets to the server
 io.on('connection', function(socket){
+
 
     // Some information about the connecting client for the log
     var clientAddr = socket.request.connection.remoteAddress;
@@ -41,6 +49,16 @@ io.on('connection', function(socket){
         callback: config.twitterCred.callback,
         x_auth_access_type: "read"
     });
+
+    // Get numbers of token in the db and send it to the
+    // frontend for showing a counter
+    (function() {
+        //WHERE accessToken IS NOT NULL -> exclude unfinished rows
+        var sql = "SELECT COUNT(1)AS tokenCount FROM userCredentials WHERE accessToken IS NOT NULL";
+        dbReadData(sql, function( result){
+            socket.emit('setCounter', result[0].tokenCount);
+        });
+    })();
 
     // When client clicks the "Login with Twitter" button:
     // Get requestToken & requestTokenSecret, save them to the users database
@@ -134,6 +152,6 @@ io.on('connection', function(socket){
 });
 
 //Listening for clients on port 3000
-http.listen(3000, function(){
+https.listen(3000, function(){
     console.log('listening on port 3000');
 });
