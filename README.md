@@ -1,3 +1,16 @@
+# Patchnotes
+## Ver 1.1.0
+
+### Counter
+I added a counter to request the number of access tokens from the database.
+(Could be motivating for some people)
+
+### SSL
+I also changed the http server to an https one.
+Therefore SSL-certificate and key need to be given to the server as the first argument.
+The url in the [frontend templates](./frontendTemplates) need to be changed to https://, thats it.
+
+I can recommend the free [Let's Encrypt](https://letsencrypt.org/) certificates.
 
 
 -----------------------------------------------
